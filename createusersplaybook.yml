@@ -1,0 +1,14 @@
+---
+
+- name: Run createswitchusers.py script
+  hosts: localhost
+  tasks:
+   - name: execute the script
+     local_action:
+       module: command
+       args: python3 createswitchusers.py
+       
+   - name: execute the script
+     local_action:
+       module: command
+       args: python3 createhostusers.py
