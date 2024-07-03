@@ -7,7 +7,7 @@ inventory = {
     'windowsdesktop3': {'host': '10.10.1.43'},
     'windowsserver4': {'host': '10.10.1.29'},
     'linuxtest_box1': {'host': '10.10.1.56'},
-    'linuxtest_box1' : {'host' : '10.10.1.57'}
+    'linuxtest_box2' : {'host' : '10.10.1.57'}
 
 }
 
