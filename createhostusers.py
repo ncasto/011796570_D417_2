@@ -1,5 +1,6 @@
 from netmiko import ConnectHandler
 from winrm.protocol import Protocol
+import crypt 
 
 inventory = {
     'windowsdesktop1': {'host': '10.10.1.35'},
@@ -15,22 +16,26 @@ ssh_username = 'student'
 ssh_password = 'P@ssw0rd'
 winrm_username = 'student'
 winrm_password = 'P@ssw0rd'
+sudo_password = 'P@ssw0rd'
 
 def create_user(hostname, username, password_str):
     if 'test' in hostname:
         device_type = 'linux'
-        command = f"sudo useradd -m -p 'WGU123' {username}"
+        hashed_password = crypt.crypt(password_str, crypt.mksalt(crypt.METHOD_SHA512))
+        command = f"sudo useradd -m -p '{hashed_password}' {username}"
         device = {
             'device_type': 'linux',
             'host': inventory[hostname]['host'],
             'username': ssh_username,
             'password': ssh_password,
-            'global_delay_factor': 2
+            'global_delay_factor': 2,
+            'verbose' : True
         }
         try:
             with ConnectHandler(**device) as conn:
-                output = conn.send_command(command, expect_string=' ')
-                print(output)
+                output = conn.send_command_timing(command)
+                if 'password' in output.lower():
+                  output += conn.send_command_timing(sudo_password)
         except Exception as e:
             print(f"Error creating user on {hostname}: {e}")
     elif 'windows' in hostname:
@@ -67,5 +72,5 @@ for host, details in inventory.items():
         continue
     create_user(host, username, 'WGU123')
     
-print("test_box1")
-print("test_box2")
+print("login created on test_box1")
+print("login created on test_box2")
